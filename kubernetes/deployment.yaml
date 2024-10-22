@@ -19,13 +19,9 @@ spec:
           image: alex662/django_project:latest
           ports:
             - containerPort: 80
-          env:
-            - name: DEBUG
-              value: 'True'
-            - name: ALLOWED_HOSTS
-              value: '192.168.39.21'
-            - name: DATABASE_URL
-              value: 'postgres://test_k8s:OwOtBep9Frut@192.168.0.10:5432/test_k8s'
+          envFrom:
+            - secretRef:
+                name: django-app-secret
 
 
 
