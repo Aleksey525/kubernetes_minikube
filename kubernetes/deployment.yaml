@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: django-app-deployment
-  labels:
-    app: k8s-deployment
 spec:
   replicas: 1
   selector:
@@ -14,14 +12,41 @@ spec:
       labels:
         app: django-app
     spec:
+      initContainers:
+        - name: collect-static
+          image: alex662/django_app:6.0
+          imagePullPolicy: Always
+          command: [ "python", "manage.py", "collectstatic", "--noinput" ]
+          volumeMounts:
+            - name: static-files
+              mountPath: /static
       containers:
-        - name: django-app-web
-          image: alex662/django_project:latest
+        - image: alex662/django_app:6.0
+          command: ["gunicorn", "webapp.wsgi:application", "--bind", "0.0.0.0:8000"]
+          name: django-app
           ports:
-            - containerPort: 80
+            - containerPort: 8000
           envFrom:
             - secretRef:
                 name: django-app-secret
+          volumeMounts:
+            - name: static-files
+              mountPath: /static
+        - image: nginx:latest
+          name: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/
+            - name: static-files
+              mountPath: /static
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: static-files
+          emptyDir: {}
 
 
 
