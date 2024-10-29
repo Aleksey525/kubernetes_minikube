@@ -14,7 +14,7 @@ spec:
         spec:
           containers:
             - name: clear-sessions-container
-              image: alex662/django_app:6.0
+              image: alex662/django_app:latest
               imagePullPolicy: IfNotPresent
               command: ["python", "manage.py", "clearsessions"]
               envFrom:

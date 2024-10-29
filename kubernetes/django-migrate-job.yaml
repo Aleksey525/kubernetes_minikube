@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: django-migrate-container
-          image: alex662/django_app:6.0
+          image: alex662/django_app:latest
           imagePullPolicy: IfNotPresent
           command: ["python", "manage.py", "migrate"]
           envFrom:

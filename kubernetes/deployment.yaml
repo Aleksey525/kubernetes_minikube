@@ -14,14 +14,17 @@ spec:
     spec:
       initContainers:
         - name: collect-static
-          image: alex662/django_app:6.0
+          image: alex662/django_app:latest
           imagePullPolicy: Always
           command: [ "python", "manage.py", "collectstatic", "--noinput" ]
+          envFrom:
+            - secretRef:
+                name: django-app-secret
           volumeMounts:
             - name: static-files
               mountPath: /static
       containers:
-        - image: alex662/django_app:6.0
+        - image: alex662/django_app:latest
           command: ["gunicorn", "webapp.wsgi:application", "--bind", "0.0.0.0:8000"]
           name: django-app
           ports:
